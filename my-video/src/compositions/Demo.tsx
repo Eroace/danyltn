@@ -152,7 +152,7 @@ export const Demo: React.FC = () => {
 	});
 
 	// --- Intro: animated title ---
-	const TITLE = 'LUMINATE';
+	const TITLE = 'DANYLTN';
 
 	// --- Intro: subtitle ---
 	const subOpacity = interpolate(frame, [T.SUBTITLE_START, T.SUBTITLE_END], [0, 1], {
@@ -369,7 +369,7 @@ export const Demo: React.FC = () => {
 							filter: `blur(${subBlur}px)`,
 						}}
 					>
-						The future of creative technology
+						Builder. Creator. Visionary.
 					</p>
 				</div>
 			</div>
@@ -397,7 +397,7 @@ export const Demo: React.FC = () => {
 							textTransform: 'uppercase',
 						}}
 					>
-						What we built
+						About me
 					</p>
 					<h2
 						style={{
@@ -408,7 +408,7 @@ export const Demo: React.FC = () => {
 							letterSpacing: -1.5,
 						}}
 					>
-						Everything you need
+						What I bring to the table
 					</h2>
 				</div>
 
@@ -418,8 +418,8 @@ export const Demo: React.FC = () => {
 						frame={frame}
 						fps={fps}
 						enterFrame={T.CARD_1}
-						title="Blazing Fast"
-						description="A modern runtime delivering sub-millisecond response times at any scale, anywhere in the world."
+						title="Vision"
+						description="I don't follow trends — I set them. Every project starts with a sharp idea and ends with real impact."
 						accentColor="#6366f1"
 						icon={
 							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_1 + 12}>
@@ -435,8 +435,8 @@ export const Demo: React.FC = () => {
 						frame={frame}
 						fps={fps}
 						enterFrame={T.CARD_2}
-						title="Deeply Connected"
-						description="Integrate seamlessly with your existing stack. APIs-first, zero vendor lock-in, infinite composability."
+						title="Execution"
+						description="Ideas mean nothing without action. I move fast, iterate relentlessly, and always deliver on what I promise."
 						accentColor="#8b5cf6"
 						icon={
 							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_2 + 12}>
@@ -452,8 +452,8 @@ export const Demo: React.FC = () => {
 						frame={frame}
 						fps={fps}
 						enterFrame={T.CARD_3}
-						title="Intelligently Crafted"
-						description="AI-native from day one. Every interaction learns, adapts, and gets smarter — automatically."
+						title="Impact"
+						description="The best work leaves a mark. I build things that matter — projects people remember, experiences that last."
 						accentColor="#a855f7"
 						icon={
 							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_3 + 12}>
@@ -587,10 +587,10 @@ export const Demo: React.FC = () => {
 							lineHeight: 1,
 						}}
 					>
-						LUMINATE
+						DANYLTN
 					</div>
 
-					{/* URL */}
+					{/* Tagline */}
 					<p
 						style={{
 							margin: 0,
@@ -601,7 +601,7 @@ export const Demo: React.FC = () => {
 							textTransform: 'uppercase',
 						}}
 					>
-						luminate.dev
+						Let's build something great.
 					</p>
 				</div>
 			</div>
