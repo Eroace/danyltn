@@ -4,6 +4,7 @@
   "scripts": {
     "start": "npx remotion studio",
     "render": "npx remotion render",
+    "render:demo": "npx remotion render Demo out/demo.mp4 --browser-executable=/opt/pw-browsers/chromium-1194/chrome-linux/chrome --chrome-mode=chrome-for-testing",
     "build": "npx remotion bundle",
     "upgrade": "npx remotion upgrade"
   },

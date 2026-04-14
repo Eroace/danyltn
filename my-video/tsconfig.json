@@ -5,14 +5,14 @@
     "target": "ES2017",
     "strict": true,
     "outDir": "./dist",
-    "rootDir": "./src",
     "noEmit": false,
     "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "isolatedModules": true,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "include": ["src", "remotion.config.ts"]
 }
