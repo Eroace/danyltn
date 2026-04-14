@@ -9,3 +9,8 @@ thumbs.db
 .DS_Store
 .idea
 
+# Video binary outputs (too large for HTTP push)
+my-video/out/*.mp4
+my-video/out/*.mov
+my-video/public/*.mp4
+my-video/public/*.mov
