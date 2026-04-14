@@ -26,7 +26,7 @@ export const Particle: React.FC<ParticleProps> = ({
 	// Golden-angle spiral distribution for even coverage
 	const angle = (index / total) * Math.PI * 2 + index * 2.399963;
 	const radius = 520 + ((index * 137) % 380);
-	const delay = (index * 11) % 55;
+	const delay = (index * 7) % 34;
 	const size = 2 + ((index * 7) % 5);
 	const hue = 246 + ((index * 17) % 50); // indigo → purple range
 
@@ -34,7 +34,7 @@ export const Particle: React.FC<ParticleProps> = ({
 	const startY = centerY + Math.sin(angle) * radius;
 
 	const effectiveFrame = frame - delay;
-	const duration = 170;
+	const duration = 108;
 
 	// Smoothstep: ease-in-out
 	const t01 = interpolate(effectiveFrame, [0, duration], [0, 1], {

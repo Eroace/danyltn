@@ -9,30 +9,30 @@ import {
 import {FeatureCard} from './FeatureCard';
 import {Particle} from './Particle';
 
-// ─── Timing map (30 fps) ──────────────────────────────────────────────────
+// ─── Timing map (30 fps) — total 600 frames = 20 s ───────────────────────
 const T = {
-	// Intro  0 → 240 (8 s)
-	PARTICLES_END: 195,
-	TITLE_START: 30,
-	SUBTITLE_START: 95,
-	SUBTITLE_END: 180,
-	INTRO_OUT: [205, 242] as [number, number],
+	// Intro  0 → 150 (5 s)
+	PARTICLES_END: 128,
+	TITLE_START: 18,
+	SUBTITLE_START: 60,
+	SUBTITLE_END: 115,
+	INTRO_OUT: [132, 152] as [number, number],
 
-	// Features  240 → 660 (14 s)
-	FEAT_IN: [240, 272] as [number, number],
-	CARD_1: 258,
-	CARD_2: 302,
-	CARD_3: 346,
-	LINE_1: [398, 468] as [number, number],
-	LINE_2: [428, 498] as [number, number],
-	DOT_IN: [390, 420] as [number, number],
-	FEAT_OUT: [624, 660] as [number, number],
+	// Features  150 → 450 (10 s)
+	FEAT_IN: [150, 172] as [number, number],
+	CARD_1: 162,
+	CARD_2: 196,
+	CARD_3: 230,
+	LINE_1: [258, 308] as [number, number],
+	LINE_2: [278, 328] as [number, number],
+	DOT_IN: [250, 274] as [number, number],
+	FEAT_OUT: [412, 450] as [number, number],
 
-	// Outro  660 → 900 (8 s)
-	OUTRO_IN: [660, 698] as [number, number],
-	LOGO_START: 672,
-	PULSE_START: 774,
-	FADE_BLACK: [852, 900] as [number, number],
+	// Outro  450 → 600 (5 s)
+	OUTRO_IN: [450, 478] as [number, number],
+	LOGO_START: 458,
+	PULSE_START: 516,
+	FADE_BLACK: [558, 600] as [number, number],
 } as const;
 
 const PARTICLE_COUNT = 42;
@@ -165,11 +165,11 @@ export const Demo: React.FC = () => {
 	});
 
 	// --- Intro: central burst when particles arrive ---
-	const burstOp = interpolate(frame, [158, 168, 200], [0, 0.7, 0], {
+	const burstOp = interpolate(frame, [100, 110, 132], [0, 0.7, 0], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 	});
-	const burstSc = interpolate(frame, [158, 168, 200], [0.3, 1.6, 0.1], {
+	const burstSc = interpolate(frame, [100, 110, 132], [0.3, 1.6, 0.1], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 	});
