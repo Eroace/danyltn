@@ -9,7 +9,7 @@ import {
 import {FeatureCard} from './FeatureCard';
 import {Particle} from './Particle';
 
-// ─── Timing map (30 fps) — total 600 frames = 20 s ───────────────────────
+// ─── Timing map (30 fps) — total 600 frames = 20 s ──────────────────
 const T = {
 	// Intro  0 → 150 (5 s)
 	PARTICLES_END: 128,
@@ -38,7 +38,7 @@ const T = {
 const PARTICLE_COUNT = 42;
 const FONT = "-apple-system,'SF Pro Display','Inter',system-ui,sans-serif";
 
-// ─── SVG Icons ────────────────────────────────────────────────────────────
+// ─── SVG Icons ────────────────────────────────────────────
 
 const IconBolt: React.FC<{progress: number}> = ({progress}) => (
 	<svg width="48" height="48" viewBox="0 0 24 24" fill="none">
@@ -105,7 +105,7 @@ const IconSparkle: React.FC<{progress: number; rotation: number}> = ({progress, 
 	</svg>
 );
 
-// ─── Animated icon wrapper (spring scale) ─────────────────────────────────
+// ─── Animated icon wrapper (spring scale) ───────────────────────────
 const AnimatedIcon: React.FC<{
 	frame: number;
 	fps: number;
@@ -126,11 +126,12 @@ const AnimatedIcon: React.FC<{
 	);
 };
 
-// ─── Main composition ─────────────────────────────────────────────────────
+// ─── Main composition ─────────────────────────────────────────────
 export const Demo: React.FC = () => {
 	const frame = useCurrentFrame();
 	const {fps, width, height} = useVideoConfig();
 
+	// --- Phase opacities ---
 	const introOp = interpolate(frame, T.INTRO_OUT, [1, 0], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
@@ -144,13 +145,16 @@ export const Demo: React.FC = () => {
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Background gradient shift during features ---
 	const bgIntensity = interpolate(frame, [...T.FEAT_IN, ...T.FEAT_OUT], [0, 1, 1, 0], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Intro: animated title ---
 	const TITLE = 'DANYLTN';
 
+	// --- Intro: subtitle ---
 	const subOpacity = interpolate(frame, [T.SUBTITLE_START, T.SUBTITLE_END], [0, 1], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
@@ -160,6 +164,7 @@ export const Demo: React.FC = () => {
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Intro: central burst when particles arrive ---
 	const burstOp = interpolate(frame, [100, 110, 132], [0, 0.7, 0], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
@@ -169,17 +174,19 @@ export const Demo: React.FC = () => {
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Feature cards layout ---
 	const CARD_W = 460;
 	const GAP = 56;
 	const totalW = 3 * CARD_W + 2 * GAP;
-	const marginL = (width - totalW) / 2;
+	const marginL = (width - totalW) / 2; // (1920-1488)/2 = 216
 	const CARD_TOP = 318;
-	const LINE_Y = 490;
+	const LINE_Y = 490; // ≈ card visual center
 
-	const cx1 = marginL + CARD_W / 2;
-	const cx2 = marginL + CARD_W + GAP + CARD_W / 2;
-	const cx3 = cx2 + CARD_W + GAP;
-	const lineLen = cx2 - cx1;
+	const cx1 = marginL + CARD_W / 2;          // 216+230 = 446
+	const cx2 = marginL + CARD_W + GAP + CARD_W / 2; // 446+516 = 962
+	const cx3 = cx2 + CARD_W + GAP;             // 962+516 = 1478
+
+	const lineLen = cx2 - cx1; // ≈ 516
 
 	const line1P = interpolate(frame, T.LINE_1, [0, 1], {
 		extrapolateLeft: 'clamp',
@@ -194,6 +201,7 @@ export const Demo: React.FC = () => {
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Icon animation progress ---
 	const iconP = (startF: number) =>
 		interpolate(frame - startF, [0, 20], [0, 1], {
 			extrapolateLeft: 'clamp',
@@ -204,6 +212,7 @@ export const Demo: React.FC = () => {
 		extrapolateRight: 'clamp',
 	});
 
+	// --- Outro: logo spring + pulse ---
 	const logoSc = spring({
 		frame: Math.max(0, frame - T.LOGO_START),
 		fps,
@@ -218,11 +227,13 @@ export const Demo: React.FC = () => {
 	);
 	const outroSc = frame >= T.PULSE_START ? logoSc * pulseSc : logoSc;
 
+	// --- Fade to black ---
 	const fadeBlack = interpolate(frame, T.FADE_BLACK, [0, 1], {
 		extrapolateLeft: 'clamp',
 		extrapolateRight: 'clamp',
 	});
 
+	// Feature section header spring
 	const headerY = spring({
 		frame: Math.max(0, frame - T.FEAT_IN[0]),
 		fps,
@@ -243,20 +254,34 @@ export const Demo: React.FC = () => {
 				fontFamily: FONT,
 			}}
 		>
+			{/* ── Dynamic background radial during features ── */}
 			<div
 				style={{
 					position: 'absolute',
 					inset: 0,
-					background: `radial-gradient(ellipse 1400px 700px at 50% 52%, rgba(99,102,241,${bgIntensity * 0.055}) 0%, rgba(168,85,247,${bgIntensity * 0.03}) 40%, transparent 70%)`,
+					background: `radial-gradient(ellipse 1400px 700px at 50% 52%,
+						rgba(99,102,241,${bgIntensity * 0.055}) 0%,
+						rgba(168,85,247,${bgIntensity * 0.03}) 40%,
+						transparent 70%)`,
 					pointerEvents: 'none',
 				}}
 			/>
 
-			{/* INTRO */}
+			{/* ══════════════ INTRO ══════════════ */}
 			<div style={{position: 'absolute', inset: 0, opacity: introOp}}>
+				{/* Particles */}
 				{Array.from({length: PARTICLE_COUNT}, (_, i) => (
-					<Particle key={i} frame={frame} index={i} total={PARTICLE_COUNT} centerX={width / 2} centerY={height / 2} />
+					<Particle
+						key={i}
+						frame={frame}
+						index={i}
+						total={PARTICLE_COUNT}
+						centerX={width / 2}
+						centerY={height / 2}
+					/>
 				))}
+
+				{/* Central burst flash */}
 				<div
 					style={{
 						position: 'absolute',
@@ -265,13 +290,16 @@ export const Demo: React.FC = () => {
 						width: 240,
 						height: 240,
 						borderRadius: '50%',
-						background: 'radial-gradient(circle, rgba(168,85,247,0.7) 0%, rgba(99,102,241,0.35) 45%, transparent 70%)',
+						background:
+							'radial-gradient(circle, rgba(168,85,247,0.7) 0%, rgba(99,102,241,0.35) 45%, transparent 70%)',
 						transform: `scale(${burstSc})`,
 						opacity: burstOp,
 						filter: 'blur(10px)',
 						pointerEvents: 'none',
 					}}
 				/>
+
+				{/* Title + subtitle block */}
 				<div
 					style={{
 						position: 'absolute',
@@ -284,48 +312,163 @@ export const Demo: React.FC = () => {
 						gap: 22,
 					}}
 				>
+					{/* Letter-by-letter title */}
 					<div style={{display: 'flex', gap: 2}}>
 						{TITLE.split('').map((char, i) => {
 							const delay = T.TITLE_START + i * 9;
 							const rel = frame - delay;
-							const sc = spring({frame: Math.max(0, rel), fps, from: 0, to: 1, config: {damping: 20, stiffness: 80}});
-							const op = interpolate(rel, [0, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-							const ty = interpolate(rel, [0, 28], [32, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+							const sc = spring({
+								frame: Math.max(0, rel),
+								fps,
+								from: 0,
+								to: 1,
+								config: {damping: 20, stiffness: 80},
+							});
+							const op = interpolate(rel, [0, 18], [0, 1], {
+								extrapolateLeft: 'clamp',
+								extrapolateRight: 'clamp',
+							});
+							const ty = interpolate(rel, [0, 28], [32, 0], {
+								extrapolateLeft: 'clamp',
+								extrapolateRight: 'clamp',
+							});
 							return (
-								<span key={i} style={{display: 'inline-block', fontSize: 118, fontWeight: 800, letterSpacing: -3, lineHeight: 1, background: 'linear-gradient(160deg, #ffffff 30%, rgba(180,170,255,0.75) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', opacity: op, transform: `translateY(${ty}px) scale(${sc})`}}>
+								<span
+									key={i}
+									style={{
+										display: 'inline-block',
+										fontSize: 118,
+										fontWeight: 800,
+										letterSpacing: -3,
+										lineHeight: 1,
+										background:
+											'linear-gradient(160deg, #ffffff 30%, rgba(180,170,255,0.75) 100%)',
+										WebkitBackgroundClip: 'text',
+										WebkitTextFillColor: 'transparent',
+										backgroundClip: 'text',
+										opacity: op,
+										transform: `translateY(${ty}px) scale(${sc})`,
+									}}
+								>
 									{char}
 								</span>
 							);
 						})}
 					</div>
-					<p style={{margin: 0, color: 'rgba(180,170,255,0.55)', fontSize: 21, fontWeight: 300, letterSpacing: 9, textTransform: 'uppercase', opacity: subOpacity, filter: `blur(${subBlur}px)`}}>
+
+					{/* Subtitle — blur to sharp */}
+					<p
+						style={{
+							margin: 0,
+							color: 'rgba(180,170,255,0.55)',
+							fontSize: 21,
+							fontWeight: 300,
+							letterSpacing: 9,
+							textTransform: 'uppercase',
+							opacity: subOpacity,
+							filter: `blur(${subBlur}px)`,
+						}}
+					>
 						Créateur. Bâtisseur. Visionnaire.
 					</p>
 				</div>
 			</div>
 
-			{/* FEATURES */}
+			{/* ══════════════ FEATURES ══════════════ */}
 			<div style={{position: 'absolute', inset: 0, opacity: featOp}}>
-				<div style={{position: 'absolute', top: 110, left: '50%', transform: `translateX(-50%) translateY(${headerY}px)`, textAlign: 'center', opacity: headerOp}}>
-					<p style={{margin: '0 0 14px', color: '#818cf8', fontSize: 12, fontWeight: 600, letterSpacing: 5, textTransform: 'uppercase'}}>
+				{/* Section header */}
+				<div
+					style={{
+						position: 'absolute',
+						top: 110,
+						left: '50%',
+						transform: `translateX(-50%) translateY(${headerY}px)`,
+						textAlign: 'center',
+						opacity: headerOp,
+					}}
+				>
+					<p
+						style={{
+							margin: '0 0 14px',
+							color: '#818cf8',
+							fontSize: 12,
+							fontWeight: 600,
+							letterSpacing: 5,
+							textTransform: 'uppercase',
+						}}
+					>
 						À propos
 					</p>
-					<h2 style={{margin: 0, color: '#f0f0f8', fontSize: 50, fontWeight: 700, letterSpacing: -1.5}}>
+					<h2
+						style={{
+							margin: 0,
+							color: '#f0f0f8',
+							fontSize: 50,
+							fontWeight: 700,
+							letterSpacing: -1.5,
+						}}
+					>
 						Ce que j'apporte
 					</h2>
 				</div>
 
+				{/* Card 1 */}
 				<div style={{position: 'absolute', left: marginL, top: CARD_TOP}}>
-					<FeatureCard frame={frame} fps={fps} enterFrame={T.CARD_1} title="Vision" description="Je ne suis pas les tendances — je les crée. Chaque projet commence par une idée claire et se termine par un impact réel." accentColor="#6366f1" icon={<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_1 + 12}><IconBolt progress={iconP(T.CARD_1 + 12)} /></AnimatedIcon>} />
-				</div>
-				<div style={{position: 'absolute', left: marginL + CARD_W + GAP, top: CARD_TOP}}>
-					<FeatureCard frame={frame} fps={fps} enterFrame={T.CARD_2} title="Exécution" description="Les idées ne valent rien sans action. Je vais vite, j'itère sans relâche et je tiens toujours mes engagements." accentColor="#8b5cf6" icon={<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_2 + 12}><IconNetwork progress={iconP(T.CARD_2 + 12)} /></AnimatedIcon>} />
-				</div>
-				<div style={{position: 'absolute', left: marginL + 2 * (CARD_W + GAP), top: CARD_TOP}}>
-					<FeatureCard frame={frame} fps={fps} enterFrame={T.CARD_3} title="Impact" description="Le meilleur travail laisse une trace. Je construis des choses qui comptent — des projets mémorables, des expériences durables." accentColor="#a855f7" icon={<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_3 + 12}><IconSparkle progress={iconP(T.CARD_3 + 12)} rotation={sparkRot} /></AnimatedIcon>} />
+					<FeatureCard
+						frame={frame}
+						fps={fps}
+						enterFrame={T.CARD_1}
+						title="Vision"
+						description="Je ne suis pas les tendances — je les crée. Chaque projet commence par une idée claire et se termine par un impact réel."
+						accentColor="#6366f1"
+						icon={
+							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_1 + 12}>
+								<IconBolt progress={iconP(T.CARD_1 + 12)} />
+							</AnimatedIcon>
+						}
+					/>
 				</div>
 
-				<svg style={{position: 'absolute', inset: 0, pointerEvents: 'none'}} width={width} height={height}>
+				{/* Card 2 */}
+				<div style={{position: 'absolute', left: marginL + CARD_W + GAP, top: CARD_TOP}}>
+					<FeatureCard
+						frame={frame}
+						fps={fps}
+						enterFrame={T.CARD_2}
+						title="Exécution"
+						description="Les idées ne valent rien sans action. Je vais vite, j'itère sans relâche et je tiens toujours mes engagements."
+						accentColor="#8b5cf6"
+						icon={
+							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_2 + 12}>
+								<IconNetwork progress={iconP(T.CARD_2 + 12)} />
+							</AnimatedIcon>
+						}
+					/>
+				</div>
+
+				{/* Card 3 */}
+				<div style={{position: 'absolute', left: marginL + 2 * (CARD_W + GAP), top: CARD_TOP}}>
+					<FeatureCard
+						frame={frame}
+						fps={fps}
+						enterFrame={T.CARD_3}
+						title="Impact"
+						description="Le meilleur travail laisse une trace. Je construis des choses qui comptent — des projets mémorables, des expériences durables."
+						accentColor="#a855f7"
+						icon={
+							<AnimatedIcon frame={frame} fps={fps} startFrame={T.CARD_3 + 12}>
+								<IconSparkle progress={iconP(T.CARD_3 + 12)} rotation={sparkRot} />
+							</AnimatedIcon>
+						}
+					/>
+				</div>
+
+				{/* ── SVG connection lines ── */}
+				<svg
+					style={{position: 'absolute', inset: 0, pointerEvents: 'none'}}
+					width={width}
+					height={height}
+				>
 					<defs>
 						<linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
 							<stop offset="0%" stopColor="#6366f1" stopOpacity="0.55" />
@@ -333,16 +476,81 @@ export const Demo: React.FC = () => {
 							<stop offset="100%" stopColor="#6366f1" stopOpacity="0.55" />
 						</linearGradient>
 					</defs>
-					<line x1={cx1} y1={LINE_Y} x2={cx2} y2={LINE_Y} stroke="url(#lineGrad)" strokeWidth="1.5" strokeDasharray={lineLen} strokeDashoffset={lineLen * (1 - line1P)} />
-					<line x1={cx2} y1={LINE_Y} x2={cx3} y2={LINE_Y} stroke="url(#lineGrad)" strokeWidth="1.5" strokeDasharray={lineLen} strokeDashoffset={lineLen * (1 - line2P)} />
-					{([cx1, cx2, cx3] as number[]).map((cx, i) => (<circle key={i} cx={cx} cy={LINE_Y} r={4.5} fill={['#6366f1', '#a855f7', '#6366f1'][i]} opacity={dotOp * (i === 1 ? 1 : 0.75)} />))}
-					{([cx1, cx2, cx3] as number[]).map((cx, i) => (<circle key={`ring-${i}`} cx={cx} cy={LINE_Y} r={10} fill="none" stroke={['#6366f1', '#a855f7', '#6366f1'][i]} strokeWidth="1" opacity={dotOp * 0.25} />))}
+
+					{/* Line card1 → card2 */}
+					<line
+						x1={cx1}
+						y1={LINE_Y}
+						x2={cx2}
+						y2={LINE_Y}
+						stroke="url(#lineGrad)"
+						strokeWidth="1.5"
+						strokeDasharray={lineLen}
+						strokeDashoffset={lineLen * (1 - line1P)}
+					/>
+					{/* Line card2 → card3 */}
+					<line
+						x1={cx2}
+						y1={LINE_Y}
+						x2={cx3}
+						y2={LINE_Y}
+						stroke="url(#lineGrad)"
+						strokeWidth="1.5"
+						strokeDasharray={lineLen}
+						strokeDashoffset={lineLen * (1 - line2P)}
+					/>
+
+					{/* Node dots */}
+					{([cx1, cx2, cx3] as number[]).map((cx, i) => (
+						<circle
+							key={i}
+							cx={cx}
+							cy={LINE_Y}
+							r={4.5}
+							fill={['#6366f1', '#a855f7', '#6366f1'][i]}
+							opacity={dotOp * (i === 1 ? 1 : 0.75)}
+						/>
+					))}
+
+					{/* Glow rings on dots */}
+					{([cx1, cx2, cx3] as number[]).map((cx, i) => (
+						<circle
+							key={`ring-${i}`}
+							cx={cx}
+							cy={LINE_Y}
+							r={10}
+							fill="none"
+							stroke={['#6366f1', '#a855f7', '#6366f1'][i]}
+							strokeWidth="1"
+							opacity={dotOp * 0.25}
+						/>
+					))}
 				</svg>
 			</div>
 
-			{/* OUTRO */}
-			<div style={{position: 'absolute', inset: 0, opacity: outroOp, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20}}>
-				<div style={{transform: `scale(${outroSc})`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 26}}>
+			{/* ══════════════ OUTRO ══════════════ */}
+			<div
+				style={{
+					position: 'absolute',
+					inset: 0,
+					opacity: outroOp,
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					justifyContent: 'center',
+					gap: 20,
+				}}
+			>
+				<div
+					style={{
+						transform: `scale(${outroSc})`,
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+						gap: 26,
+					}}
+				>
+					{/* Logo mark — 4-pointed sparkle */}
 					<svg width="88" height="88" viewBox="0 0 80 80">
 						<defs>
 							<radialGradient id="outroGrad" cx="50%" cy="50%" r="50%">
@@ -350,20 +558,64 @@ export const Demo: React.FC = () => {
 								<stop offset="55%" stopColor="#818cf8" />
 								<stop offset="100%" stopColor="#6366f1" />
 							</radialGradient>
-							<filter id="glow"><feGaussianBlur stdDeviation="3" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+							<filter id="glow">
+								<feGaussianBlur stdDeviation="3" result="blur" />
+								<feMerge>
+									<feMergeNode in="blur" />
+									<feMergeNode in="SourceGraphic" />
+								</feMerge>
+							</filter>
 						</defs>
-						<path d="M40 4 C50 28 52 30 76 40 C52 50 50 52 40 76 C30 52 28 50 4 40 C28 30 30 28 40 4 Z" fill="url(#outroGrad)" filter="url(#glow)" />
+						<path
+							d="M40 4 C50 28 52 30 76 40 C52 50 50 52 40 76 C30 52 28 50 4 40 C28 30 30 28 40 4 Z"
+							fill="url(#outroGrad)"
+							filter="url(#glow)"
+						/>
 					</svg>
-					<div style={{fontSize: 78, fontWeight: 800, letterSpacing: -2.5, background: 'linear-gradient(135deg, #ffffff 20%, rgba(168,85,247,0.75) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', lineHeight: 1}}>
+
+					{/* Brand name */}
+					<div
+						style={{
+							fontSize: 78,
+							fontWeight: 800,
+							letterSpacing: -2.5,
+							background:
+								'linear-gradient(135deg, #ffffff 20%, rgba(168,85,247,0.75) 100%)',
+							WebkitBackgroundClip: 'text',
+							WebkitTextFillColor: 'transparent',
+							backgroundClip: 'text',
+							lineHeight: 1,
+						}}
+					>
 						DANYLTN
 					</div>
-					<p style={{margin: 0, color: 'rgba(180,170,255,0.38)', fontSize: 15, fontWeight: 400, letterSpacing: 4.5, textTransform: 'uppercase'}}>
+
+					{/* Tagline */}
+					<p
+						style={{
+							margin: 0,
+							color: 'rgba(180,170,255,0.38)',
+							fontSize: 15,
+							fontWeight: 400,
+							letterSpacing: 4.5,
+							textTransform: 'uppercase',
+						}}
+					>
 						Construisons quelque chose de grand.
 					</p>
 				</div>
 			</div>
 
-			<div style={{position: 'absolute', inset: 0, backgroundColor: '#000000', opacity: fadeBlack, pointerEvents: 'none'}} />
+			{/* ── Fade to black ── */}
+			<div
+				style={{
+					position: 'absolute',
+					inset: 0,
+					backgroundColor: '#000000',
+					opacity: fadeBlack,
+					pointerEvents: 'none',
+				}}
+			/>
 		</AbsoluteFill>
 	);
 };
