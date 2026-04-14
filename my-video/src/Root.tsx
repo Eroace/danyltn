@@ -1,6 +1,7 @@
 import React from 'react';
 import {Composition} from 'remotion';
 import {Demo} from './compositions/Demo';
+import {SplitScreen} from './compositions/SplitScreen';
 
 export const RemotionRoot: React.FC = () => {
 	return (
@@ -12,6 +13,14 @@ export const RemotionRoot: React.FC = () => {
 				fps={30}
 				width={1920}
 				height={1080}
+			/>
+			<Composition
+				id="SplitScreen"
+				component={SplitScreen}
+				durationInFrames={820}
+				fps={30}
+				width={1080}
+				height={1920}
 			/>
 		</>
 	);
